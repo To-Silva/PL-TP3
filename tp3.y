@@ -65,8 +65,6 @@ Exp : value
     | Exp MINUS Exp
     | Exp MUL Exp
     | Exp DIV Exp
-    | MINUS Exp
-    | PLUS Exp
     | Exp EXP Exp
     | '(' Exp ')'
     ;

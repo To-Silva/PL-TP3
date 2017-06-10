@@ -1,54 +1,54 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "uthash.h"
 #include "HashTable.h"
 #include "entry.h"
-ITEM *items = NULL;
+
 typedef struct item {
     char *key;
     Entry *value;
     UT_hash_handle hh;
-} ITEM;
+} Item, *HashTable;
 
 
 
 
-void add_key ( char *key, Entry *entry )
+void add_key (HashTable *hashtable,const char *key,const Entry *entry )
 {
-    ITEM *s;
-    HASH_FIND_STR ( items, key, s );
+    Item *s;
+    HASH_FIND_STR ( *hashtable, key, s );
 
     if ( s==NULL ) {
-        s = ( ITEM * ) malloc ( sizeof ( ITEM ) );
+        s = malloc (sizeof *s) ;
         s->key = strdup ( key );
         s->value = entry;
-        HASH_ADD_KEYPTR ( hh,  items, s->key, strlen ( s->key ), s );
+        HASH_ADD_KEYPTR ( hh,  *hashtable, s->key, strlen ( s->key ), s );
     }
 }
 
-Entry *find_key ( char *key )
+Entry *find_key (const HashTable hashtable,const char *key )
 {
     ITEM *s;
-    HASH_FIND_STR ( items, key, s );
+    HASH_FIND_STR ( hashtable, key, s );
     return ( s?s->value: NULL );
 }
 
-void delete_key ( char *key )
+void delete_key (HashTable *hashtable,const char *key )
 {
     ITEM *s;
-    HASH_FIND_STR ( items, key, s );
-    HASH_DEL ( items, s );
+    HASH_FIND_STR ( *hashtable, key, s );
+    HASH_DEL ( *hashtable, s );
     free ( s->value );
     free ( s->key );
     free ( key );
 }
 
-void delete_all()
+void delete_all(HashTable *hashtable)
 {
     ITEM *item1, *tmp1;
-    HASH_ITER ( hh, items, item1, tmp1 ) {
-        HASH_DEL ( items, item1 );
+    HASH_ITER ( hh, *hashtable, item1, tmp1 ) {
+        HASH_DEL ( *hashtable, item1 );
         free ( item1->value );
         free ( item1->key );
         free ( item1 );
@@ -57,9 +57,9 @@ void delete_all()
 
 
 
-int total_items()
+int total_items(const HashTable hashtable)
 {
     unsigned int num_items;
-    num_items = HASH_COUNT ( items );
+    num_items = HASH_COUNT ( hashtable );
     return num_items;
 }

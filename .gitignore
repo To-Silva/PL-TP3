@@ -45,3 +45,9 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Ignore the compiler, auto-generated .c, and debug stuff
+lex.yy.c
+y.tab.c
+tp3
+*.vm

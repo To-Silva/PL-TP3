@@ -3,12 +3,12 @@
 #include "entry.h"
 /* simple_hashtable.c */
 
-typedef struct item ITEM;
-void add_key(char *key, Entry *entry);
-Entry *find_key(char *key);
-void delete_key(char *key);
-void delete_all(void);
-int total_items(void);
+typedef struct item *HashTable;
+void add_key(HashTable *hashtable,const char *key,const Entry *entry);
+Entry *find_key(const HashTable hashtable,const char *key);
+void delete_key(HashTable *hashtable,const char *key);
+void delete_all(HashTable *hashtable);
+int total_items(const HashTable hashtable);
 
 
 
