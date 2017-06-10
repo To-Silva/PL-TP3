@@ -1,0 +1,48 @@
+%option yylineno noyywrap
+
+%%
+[0-9]+                {
+                       yylval.i = atoi(yytext);
+                       return NUM;
+                      }
+;                     {return ';';}
+\[                    {return '[';}
+\]                    {return ']';}
+\(                    {return '(';}
+\)                    {return ')';}
+\{                    {return '{';}
+\}                    {return '}';}
+
+[Ee][Qq]              {return EQ;}
+[Dd][Ii][Ff]        {return DIF;}
+[Gg][Tt]            {return GT;}
+[Gg][Tt][Ee]        {return GTE;}
+[Ll][Tt]            {return LT;}
+[Ll][Tt][Ee]        {return LTE;}
+
+\+        {return PLUS;}
+-        {return MINUS;}
+\*        {return MUL;}
+\/        {return DIV;}
+\^        {return EXP;}
+
+[Aa][Nn][Dd]        {return AND;}
+[Nn][Oo][Tt]        {return NOT;}
+[Oo][Rr]            {return OR;}
+
+[Ii][Ff]                   {return IF;}
+[Ww][Hh][Ii][Ll][Ee]       {return WHILE;}
+[Ee][Ll][Ss][Ee]           {return ELSE;}
+[Dd][Oo]                   {return DO;}
+[Rr][Ee][Aa][Dd]           {return RD;}
+[Ww][Rr][Ii][Tt][Ee]       {return WR;}
+\"(.*)\"                    {yylval.s = strdup(yytext);return STR;}
+
+[Ii][Nn][Tt]        {return INT;}
+[Ii][Ss]            {return IS;}
+
+[A-Za-z0-9]+          {yylval.s = strdup(yytext);return VAR;}
+([ ]?[,][ ]?)         {return SEP;}
+[ \t\r\n]+            {;}
+.                     {yyerror("invalid character");}
+%%
