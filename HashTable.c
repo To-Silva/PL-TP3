@@ -9,7 +9,7 @@ typedef struct item {
     char *key;
     Entry *value;
     UT_hash_handle hh;
-} Item, *HashTable;
+} Item;
 
 
 

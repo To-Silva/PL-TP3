@@ -1,39 +1,31 @@
 #include <stdlib.h>
 #include "entry.h"
-#include "types.h"
 
 
-typedef struct entry {
-    Class class;
+struct entry {
+    Type type;
     int address;
     int sizex;
     int sizey;
-} ENTRY;
+};
 
+Entry create_entry(void);
 
-Entry *init_entry()
+Entry create_entry()
 {
-    Entry *var = ( Entry * ) malloc ( sizeof ( struct entry ) );
-
-    if ( var==NULL )
-        return NULL;
-
-    var->class=0;
-    var->address = -1;
-    var->sizex = 0;
-    var->sizey = 0;
+    Entry var = malloc ( sizeof *var );
     return var;
 }
 
-Class get_class ( Entry *var )
+Type get_class (const Entry var )
 {
     if ( var )
-        return var->id_class;
+        return var->type;
 
-    return Nothing;
+    return Error;
 }
 
-int get_address ( Entry *var )
+int get_address (const Entry var )
 {
     if ( var )
         return var->address;
@@ -41,50 +33,23 @@ int get_address ( Entry *var )
     return -1;
 }
 
-int get_sizex ( Entry *it )
+int get_sizex (const Entry var )
 {
-    if ( it )
-        return it->sizex;
+    if ( var )
+        return var->sizex;
 
     else return -1;
 }
-int get_sizey ( Entry *it )
+int get_sizey (const Entry var )
 {
-    if ( it )
-        return it->sizey;
+    if ( var )
+        return var->sizey;
 
     else return -1;
 }
 
-/****************************/
-int set_sizex ( Entry *it, int sx )
-{
-    if ( it==NULL )
-        return -1;
 
-    it->sizex = sx;
-    return 0;
-}
-int set_sizey ( Entry *it, int sy )
-{
-    if ( it==NULL )
-        return -1;
-
-    it->sizey = sy;
-    return 0;
-}
-
-int set_address ( Entry *var, int address )
-{
-    if ( var == NULL )
-        return -1;
-
-    var->address = address;
-    return -1;
-}
-
-
-void delete_entry ( Entry *t )
+void delete_entry ( Entry t )
 {
     if ( t ) {
         free ( t );
@@ -93,41 +58,42 @@ void delete_entry ( Entry *t )
 }
 
 
-Entry *new_entry_variable ( int address, Class id_class )
+Entry new_entry_variable (const int address,const Type type )
 {
-    Entry *var = init_entry();
+    Entry var = create_entry();
 
-    if ( var==NULL )
-        return NULL;
+    if ( var )
+    {
+      var->type=type;
+      var->address=address;
+    }
 
-    set_class ( var, id_class );
-    set_address ( var, address );
     return var;
 }
 
-Entry *new_entry_array ( int address, Class id_class, int size)
+Entry new_entry_array (const int address,const Type type,const int size)
 {
-    Entry *var = init_entry();
+  Entry var = create_entry();
 
-    if ( var==NULL )
-        return NULL;
-
-    set_class ( var, id_class );
-    set_sizex ( var, size );
-    set_address ( var, address );
+  if ( var )
+  {
+    var->type=type;
+    var->address=address;
+    var->sizex=size;
+  }
     return var;
 }
 
-Entry *new_entry_array2D ( int address, Class id_class, int sizex, int sizey)
+Entry new_entry_array2D (const int address,const Type type,const int sizex,const int sizey)
 {
-    Entry *var = init_entry();
+  Entry var = create_entry();
 
-    if ( var==NULL )
-        return NULL;
-
-    set_class ( var, id_class );
-    set_sizex ( var, size );
-    set_sizey ( var, nrows );
-    set_address ( var, address );
+  if ( var )
+  {
+    var->type=type;
+    var->address=address;
+    var->sizex=sizex;
+    var->sizey=sizey;
+  }
     return var;
 }

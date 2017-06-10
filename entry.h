@@ -3,20 +3,16 @@
 #define ENTRY_H_INCLUDED
 #include "types.h"
 
-typedef struct entry Entry;
+
+typedef struct entry *Entry;
 /* entry.c */
-Entry *init_entry(void);
-Class get_class(Entry *it);
-int get_address(Entry *it);
-int get_sizex(Entry *it);
-int set_class(Entry *it, Class id_class);
-int set_address(Entry *it, int address);
-int set_sizex(Entry *it, int sx);
-int set_sizey(Entry *it, int sy);
-void delete_entry(Entry *t);
-Entry *new_entry_variable(int address, Class id_class);
-Entry *new_entry_array(int address, Class id_class, int size);
-Entry *new_entry_matrix(int address, Class id_class, int sizex, int sizey);
+Type get_type(const Entry it);
+int get_address(const Entry it);
+int get_sizex(const Entry it);
+void delete_entry(const Entry t);
+Entry new_entry_variable(const int address,const Type type);
+Entry new_entry_array(const int address,const Type type,const int size);
+Entry new_entry_matrix(const int address, const type,const int sizex,const int sizey);
 
 
 

@@ -1,12 +1,13 @@
 #ifndef TYPES_H_INCLUDED
 #define TYPES_H_INCLUDED
 
-typedef enum cl
+typedef enum typ
 {
     intVar,
     Array,
-    Array2D
+    Array2D,
+    Error
 
-}Class;
+}Type;
 
 #endif // TYPES_H_INCLUDED

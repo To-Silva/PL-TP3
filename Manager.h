@@ -1,17 +1,17 @@
-#ifndef PROGRAM_STATUS_H_INCLUDED
-#define PROGRAM_STATUS_H_INCLUDED
+#ifndef MANAGER_H_INCLUDED
+#define MANAGER_H_INCLUDED
 #include "types.h"
-#include "entry.h"
-#include "HashTable.h"
+/*
 #define MAX_LABEL_STACK 1024
 #define MAX_LABEL 1024
 #define MAX_CONDITION_ROW 4
+*/
 
 /* program_status.c */
-typedef struct stat
+typedef struct manager
 {
     int addresspointer;
-} Program_status;
+} *Program_Manager;
 
 Program_status *init(Program_status * status);
 int push_label_stack(Program_status *status, CompoundInstruction cpd);
