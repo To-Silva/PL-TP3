@@ -72,6 +72,7 @@ Exp : value
     ;
 
 value: VAR
+      |MINUS NUM
       |NUM
       ;
 
@@ -95,6 +96,7 @@ numList: Exp                                     {printf("number of list\n");}
 %%
 #include "lex.yy.c"
 int main(int argc,char *argv[]){
+
   fp = fopen("output.vm","w");
   yyparse();
   fclose(fp);

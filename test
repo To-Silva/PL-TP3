@@ -21,3 +21,4 @@ while (b eq 4){
 int v[10+2][b-1] is [10,1,1][23,3,3];
 write "this is a test";
 read;
+x is -5--5;
