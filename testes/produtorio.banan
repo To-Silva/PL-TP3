@@ -1,0 +1,15 @@
+int count;
+int prod;
+int temp;
+count is read;
+if(count GT 0)
+{
+  prod is 1;
+  while(count GT 0)
+  {
+    temp is read;
+    prod is prod*temp;
+    count is count-1;
+  }
+}
+writei prod;

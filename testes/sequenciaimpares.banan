@@ -1,0 +1,13 @@
+int count;
+int temp;
+count is read;
+temp is 1;
+while(temp dif 0)
+{
+  temp is read;
+  if (temp % 2 dif 0)
+  {
+    count is count+1;
+  }
+}
+writei count;

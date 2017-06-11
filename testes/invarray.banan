@@ -1,0 +1,18 @@
+int n[30];
+int i;
+int count;
+
+i is 0;
+count is read;
+while (i LT count)
+{
+  n[i] is read;
+  i is i +1;
+}
+
+count is count-1;
+while ( count GTE 0 )
+{
+      writei n[count];
+      count is count-1;
+}
