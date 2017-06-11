@@ -5,6 +5,11 @@
   #include "Types.h"
   #include "HashTable.h"
   #include "Manager.h"
+  typedef enum _boolean
+  {
+    True,
+    False
+  } boolean;
   static char *names;
   static int *values;
   static FILE *fp;
@@ -16,6 +21,11 @@
 %union{
   char *s;
   int i;
+  struct value
+  {
+    int val;
+    boolean b;
+  } s_val;
 };
 %token IF WHILE ELSE DO WR RD
 %token NUM IS INT VAR STR
@@ -23,8 +33,9 @@
 %left NOT AND OR SEP
 %left PLUS MINUS MUL DIV MOD
 %right EXP
-%type <i> NUM Exp condition
+%type <i> NUM
 %type <s> STR VAR
+%type <s_val> Exp value
 %%
 
 program: declarations statements
@@ -39,21 +50,69 @@ statements:
           |;
 
 statement: varAssign ';'
-          |WR STR ';'            {printf("string write\n");fprintf(fp, "pushs %s\nwrites\n",$2);}
-          |WR VAR ';'            {printf("write integer\n");fprintf(fp, "pushg %d \nwrites\n",get_address(find_key(hashtable,$2)));}
+          |WR STR ';'            {printf("string write\n");fprintf(fp, "\tpushs %s\n\twrites\n",$2);}
+          |WR VAR ';'            {printf("write integer\n");fprintf(fp, "\tpushg %d \n\twrites\n",get_address(find_key(hashtable,$2)));}
           |RD ';'                {printf("string read\n");fprintf(fp, "read\n atoi\n");}
           |ifBlock
           |whileBlock
           ;
 
-ifBlock: IF '(' condition ')' '{' statements '}'                           {printf("if cond statements\n");}
-        |IF '(' condition ')' statement                                    {printf("if cond statement\n");}
-        |IF '(' condition ')' '{' statements '}' ELSE '{' statements '}'   {printf("if cond statements else statements\n");}
+ifBlock: IF '(' condition ')'
+
+                              {push_label(manager,If);
+                               fprintf(fp, "\tjz if%d\n",top_label(manager,If));}
+
+                             '{' statements '}'                            {printf("if cond statements\n");
+                                                                            fprintf(fp,"if%d:nop\n",top_label(manager,If));
+                                                                            pop_label(manager,If);}
+
+        |IF '(' condition ')'
+
+                              {push_label(manager,If);
+                               fprintf(fp, "\tjz if%d\n",top_label(manager,If));}
+
+                                       statement                           {printf("if cond statement\n");
+                                                                            fprintf(fp,"if%d:nop\n",top_label(manager,If));
+                                                                            pop_label(manager,If);}
+
+        |IF '(' condition ')'
+
+                            {push_label(manager,If);
+                             fprintf(fp, "\tjz if%d\n",top_label(manager,If));}
+
+                                '{' statements '}'   {push_label(manager,Else);
+                                                      fprintf(fp, "\tjz else%d\n",top_label(manager,Else));
+                                                      fprintf(fp,"if%d:\n\tnop\n",top_label(manager,If));
+                                                      pop_label(manager,If);}
+
+                                                      ELSE '{' statements '}'   {printf("if cond statements else statements\n");
+                                                                                 fprintf(fp,"else%d:\n\tnop\n",top_label(manager,Else));
+                                                                                 pop_label(manager,Else);}
         ;
 
-whileBlock: WHILE '(' condition ')' '{' statements '}'                     {printf("while\n");}
-           |WHILE '(' condition ')' statement                              {printf("while\n");}
-           |DO '{' statements '}' WHILE '(' condition ')'
+whileBlock: {push_label(manager,While);
+             fprintf(fp,"ciclo%d:\n\tnop\n",top_label(manager,While));}
+
+             WHILE '(' condition ')' {fprintf(fp,"\tjz end%d\n",top_label(manager,While));}
+
+                                    '{' statements '}'                     {printf("while statements\n");
+                                                                            fprintf(fp,"\tjmp ciclo%d\n",top_label(manager,While));
+                                                                            pop_label(manager,While);}
+
+           |{push_label(manager,While);
+                        fprintf(fp,"ciclo%d:\n\tnop\n",top_label(manager,While));}
+
+            WHILE '(' condition ')' {fprintf(fp,"\tjz end%d\n",top_label(manager,While));}
+
+                                   statement                              {printf("while\n");
+                                                                           fprintf(fp,"\tjmp ciclo%d\n",top_label(manager,While));
+                                                                           pop_label(manager,While);}
+           |DO {push_label(manager,DoWhile);
+                fprintf(fp,"do%d:\n\tnop\n",top_label(manager,DoWhile));}
+
+                '{' statements '}' WHILE '(' condition ')'                 {printf("do while\n");
+                                                                            fprintf(fp,"\tnot\n\tjz do%d\n",top_label(manager,DoWhile));
+                                                                            pop_label(manager,DoWhile);}
            ;
 
 condition: comparison                                {printf("comparison\n");}
@@ -80,28 +139,28 @@ Exp : value
     | '(' Exp ')'
     ;
 
-value: VAR
-      |MINUS NUM
-      |NUM
+value: VAR                                          {$$.val=-1;$$.b=False;}
+      |MINUS NUM                                    {$$.val=-$2;$$.b=True;}
+      |NUM                                          {$$.val=$1;$$.b=False;}
       ;
 
 intDec:  INT VAR                                    { Entry e= new_entry_variable(new_int(manager),intVar);
                                                       if(add_key(&hashtable,$2,e)) {
-                                                        printf("pushi 0\n");
+                                                        fprintf(fp,"\tpushi 0\n");
                                                         printf("variable declaration\n");
                                                       } else {
                                                         yyerror("variable redeclaration");
                                                       }}
-       | INT VAR '[' Exp ']'                        {Entry e= new_entry_variable(new_array(manager,$4),intVar);
+       | INT VAR '[' Exp ']'                        {Entry e= new_entry_variable(new_array(manager,$4.val),intVar);
                                                      if(add_key(&hashtable,$2,e)) {
-                                                        printf("pushn %d\n", get_sizex(e));
+                                                        fprintf(fp,"\tpushn %d\n", get_sizex(e));
                                                         printf("array declaration\n");
                                                      } else {
                                                         yyerror("variable redeclaration");
                                                      }}
-       | INT VAR '[' Exp ']' '[' Exp ']'            {Entry e= new_entry_variable(new_matrix(manager,$4,$7),intVar);
+       | INT VAR '[' Exp ']' '[' Exp ']'            {Entry e= new_entry_variable(new_matrix(manager,$4.val,$7.val),intVar);
                                                      if(add_key(&hashtable,$2,e)) {
-                                                        printf("pushn %d\n", get_sizexy(e));
+                                                        fprintf(fp,"\tpushn %d\n", get_sizexy(e));
                                                         printf("matrix declaration\n");
                                                      } else {
                                                         yyerror("variable redeclaration");

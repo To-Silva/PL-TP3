@@ -17,7 +17,7 @@ Entry create_entry()
     return var;
 }
 
-Type get_class (const Entry var )
+Type get_type (const Entry var )
 {
     if ( var )
         return var->type;

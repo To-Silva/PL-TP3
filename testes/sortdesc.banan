@@ -38,6 +38,6 @@ i is 0;
 
 while ( i LT count )
 {
-      writei n[i];
+      write n[i];
 
 }

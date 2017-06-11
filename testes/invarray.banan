@@ -13,6 +13,6 @@ while (i LT count)
 count is count-1;
 while ( count GTE 0 )
 {
-      writei n[count];
+      write n[count];
       count is count-1;
 }

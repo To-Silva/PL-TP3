@@ -10,4 +10,4 @@ while(temp dif 0)
     count is count+1;
   }
 }
-writei count;
+write count;

@@ -12,4 +12,4 @@ if(count GT 0)
     count is count-1;
   }
 }
-writei prod;
+write prod;
