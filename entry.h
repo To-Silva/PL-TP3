@@ -9,11 +9,11 @@ typedef struct entry *Entry;
 Type get_type(const Entry it);
 int get_address(const Entry it);
 int get_sizex(const Entry it);
-int get_sizexy (const Entry var )
+int get_sizexy (const Entry var );
 void delete_entry(const Entry t);
 Entry new_entry_variable(const int address,const Type type);
 Entry new_entry_array(const int address,const Type type,const int size);
-Entry new_entry_matrix(const int address, const type,const int sizex,const int sizey);
+Entry new_entry_matrix(const int address, const Type type,const int sizex,const int sizey);
 
 
 

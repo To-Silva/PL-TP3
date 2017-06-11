@@ -4,11 +4,12 @@
 
 
 /* program_status.c */
-typedef struct manager Manager;
+typedef struct manager *Manager;
 
-int new_int ( Manager *status);
-int new_array ( Manager *status, int size);
-int new_matrix ( Manager *status, int sizex, int sizey);
+Manager create_manager(const int stack_cap);
+int new_int ( Manager status);
+int new_array ( Manager status, int size);
+int new_matrix ( Manager status, int sizex, int sizey);
 
 
 

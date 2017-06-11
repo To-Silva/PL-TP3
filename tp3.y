@@ -9,7 +9,7 @@
   static int *values;
   static FILE *fp;
   static HashTable hashtable;
-  static Manager *manager;
+  static Manager manager;
   int yylex();
   void yyerror(char*);
 %}
@@ -23,7 +23,7 @@
 %left NOT AND OR SEP
 %left PLUS MINUS MUL DIV MOD
 %right EXP
-%type <i> NUM EXP
+%type <i> NUM Exp
 %type <s> STR VAR
 %%
 
@@ -86,21 +86,21 @@ value: VAR
       ;
 
 intDec:  INT VAR                                    { Entry e= new_entry_variable(new_int(manager),intVar);
-                                                      if(add_key(hashtable,e)) {
+                                                      if(add_key(&hashtable,$2,e)) {
                                                         printf("pushi 0\n");
                                                         printf("variable declaration\n");
                                                       } else {
                                                         yyerror("variable redeclaration");
                                                       }}
-       | INT VAR '[' Exp ']'                        {Entry e= new_entry_variable(new_array(manager),intVar);
-                                                     if(add_key(hashtable,e)) {
+       | INT VAR '[' Exp ']'                        {Entry e= new_entry_variable(new_array(manager,$4),intVar);
+                                                     if(add_key(&hashtable,$2,e)) {
                                                         printf("pushn %d\n", get_sizex(e));
                                                         printf("array declaration\n");
                                                      } else {
                                                         yyerror("variable redeclaration");
                                                      }}
        | INT VAR '[' Exp ']' '[' Exp ']'            {Entry e= new_entry_variable(new_matrix(manager,$4,$7),intVar);
-                                                     if(add_key(hashtable,e)) {
+                                                     if(add_key(&hashtable,$2,e)) {
                                                         printf("pushn %d\n", get_sizexy(e));
                                                         printf("matrix declaration\n");
                                                      } else {
@@ -113,7 +113,7 @@ varAssign:  VAR IS Exp                                 {printf("var value assign
            |VAR IS '[' numList ']' '[' numList ']'     {printf("array 2D value assign\n");}
            |VAR IS RD ';'                              {printf("string read\n");fprintf(fp, "read atoi\n");}
            |VAR '[' Exp ']' IS Exp
-           |VAR '[' Exp ']' IS RD ';'
+           |VAR '[' Exp ']' IS RD ';'                  {printf("array subscript assign read")}
            |VAR '[' Exp ']' IS '[' numList ']'
            |VAR '[' Exp ']' '[' Exp ']' IS Exp
            |VAR '[' Exp ']' '[' Exp ']' IS RD ';'
@@ -128,7 +128,7 @@ numList: Exp                                     {printf("number of list\n");}
 int main(int argc,char *argv[]){
 
   fp = fopen("output.vm","w");
-  *manager = create_manager(JUMP_LABELS_MAX);
+  manager=create_manager(JUMP_LABELS_MAX);
   yyparse();
   fclose(fp);
   return 0;

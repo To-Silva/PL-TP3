@@ -11,8 +11,6 @@ typedef struct item {
 } Item;
 
 
-
-
 int add_key (HashTable *hashtable,const char *key,const Entry entry )
 {
     int success=0;
@@ -31,14 +29,14 @@ int add_key (HashTable *hashtable,const char *key,const Entry entry )
 
 Entry find_key (const HashTable hashtable,const char *key )
 {
-    ITEM *s;
+    Item *s;
     HASH_FIND_STR ( hashtable, key, s );
     return ( s?s->value: NULL );
 }
 
-void delete_key (HashTable *hashtable,const char *key )
+void delete_key (HashTable *hashtable,char *key )
 {
-    ITEM *s;
+    Item *s;
     HASH_FIND_STR ( *hashtable, key, s );
     if (s)
     {
@@ -51,7 +49,7 @@ void delete_key (HashTable *hashtable,const char *key )
 
 void delete_all(HashTable *hashtable)
 {
-    ITEM *item1, *tmp1;
+    Item *item1, *tmp1;
     HASH_ITER ( hh, *hashtable, item1, tmp1 ) {
         HASH_DEL ( *hashtable, item1 );
         free ( item1->value );

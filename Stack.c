@@ -1,4 +1,7 @@
 #include "Stack.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 struct stack {
     void *data;
@@ -31,15 +34,15 @@ void *top(const Stack s)
 {
     if (s->size == 0) {
         fprintf(stderr, "Error: stack empty\n");
-        return -1;
+        return NULL;
     }
 
-    return s->data[s->size-1*s->elem_size];
+    return s->data+((s->size-1)*s->elem_size);
 }
 
 void push(Stack s, void *elem)
 {
-    if (s->size < stack_max_cap)
+    if (s->size < s->stack_max)
     {
       memcpy(s->data+(s->size*s->elem_size),elem,s->elem_size);
       s->size++;
