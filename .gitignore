@@ -7,6 +7,7 @@ Desktop.ini
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
+lib/
 
 # Windows Installer files
 *.cab
@@ -46,8 +47,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# Ignore the compiler, auto-generated .c, and debug stuff
+# Ignore the compiler, auto-generated .c, vm, and debug stuff
 lex.yy.c
 y.tab.c
 tp3
 *.vm
+*.jar
+*.tmp

@@ -3,19 +3,19 @@
 #include <string.h>
 #include "uthash.h"
 #include "HashTable.h"
-#include "entry.h"
 
 typedef struct item {
     char *key;
-    Entry *value;
+    Entry value;
     UT_hash_handle hh;
 } Item;
 
 
 
 
-void add_key (HashTable *hashtable,const char *key,const Entry *entry )
+int add_key (HashTable *hashtable,const char *key,const Entry entry )
 {
+    int success=0;
     Item *s;
     HASH_FIND_STR ( *hashtable, key, s );
 
@@ -24,10 +24,12 @@ void add_key (HashTable *hashtable,const char *key,const Entry *entry )
         s->key = strdup ( key );
         s->value = entry;
         HASH_ADD_KEYPTR ( hh,  *hashtable, s->key, strlen ( s->key ), s );
+        success=-1;
     }
+    return success;
 }
 
-Entry *find_key (const HashTable hashtable,const char *key )
+Entry find_key (const HashTable hashtable,const char *key )
 {
     ITEM *s;
     HASH_FIND_STR ( hashtable, key, s );
@@ -38,10 +40,13 @@ void delete_key (HashTable *hashtable,const char *key )
 {
     ITEM *s;
     HASH_FIND_STR ( *hashtable, key, s );
-    HASH_DEL ( *hashtable, s );
-    free ( s->value );
-    free ( s->key );
-    free ( key );
+    if (s)
+    {
+      HASH_DEL ( *hashtable, s );
+      free ( s->value );
+      free ( s->key );
+      free ( key );
+    }
 }
 
 void delete_all(HashTable *hashtable)

@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "entry.h"
+#include "Entry.h"
 
 
 struct entry {
