@@ -1,7 +1,7 @@
 
 #ifndef ENTRY_H_INCLUDED
 #define ENTRY_H_INCLUDED
-#include "types.h"
+#include "Types.h"
 
 
 typedef struct entry *Entry;

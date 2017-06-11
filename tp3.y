@@ -1,13 +1,15 @@
 %{
   #include <stdio.h>
   #include <string.h>
-  #include "entry.h"
-  #include "types.h"
+  #include "Entry.h"
+  #include "Types.h"
+  #include "HashTable.h"
   char *names;
   int *values;
   int yylex();
   void yyerror(char*);
-  FILE *fp;
+  static FILE *fp;
+  static HashTable hashtable;
 %}
 %union{
   char *s;
@@ -72,7 +74,7 @@ Exp : value
     | Exp MUL Exp
     | Exp DIV Exp
     | Exp EXP Exp
-    | Exp MOD Exp    
+    | Exp MOD Exp
     | '(' Exp ')'
     ;
 

@@ -1,6 +1,6 @@
 #ifndef HASH_TABLE_H_INCLUDED
 #define HASH_TABLE_H_INCLUDED
-#include "entry.h"
+#include "Entry.h"
 /* simple_hashtable.c */
 
 typedef struct item *HashTable;
