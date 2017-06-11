@@ -40,10 +40,10 @@ int get_sizex (const Entry var )
 
     else return -1;
 }
-int get_sizey (const Entry var )
+int get_sizexy (const Entry var )
 {
     if ( var )
-        return var->sizey;
+        return var->sizex * var->sizey;
 
     else return -1;
 }

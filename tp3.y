@@ -4,12 +4,14 @@
   #include "Entry.h"
   #include "Types.h"
   #include "HashTable.h"
-  char *names;
-  int *values;
-  int yylex();
-  void yyerror(char*);
+  #include "Manager.h"
+  static char *names;
+  static int *values;
   static FILE *fp;
   static HashTable hashtable;
+  static Manager *manager;
+  int yylex();
+  void yyerror(char*);
 %}
 %union{
   char *s;
@@ -21,8 +23,8 @@
 %left NOT AND OR SEP
 %left PLUS MINUS MUL DIV MOD
 %right EXP
-%type <i> NUM
-%type <s> VAR STR
+%type <i> NUM EXP
+%type <s> STR VAR
 %%
 
 program: declarations statements
@@ -36,10 +38,10 @@ statements:
           statement statements
           |;
 
-statement:VAR varAssign ';'
-          |VAR '[' Exp ']' varAssign ';'
+statement: varAssign ';'
           |WR STR ';'            {printf("string write\n");fprintf(fp, "pushs %s\nwrites\n",$2);}
-          |RD ';'                {printf("string read\n");fprintf(fp, "read atoi\n");}
+          |WR VAR ';'            {printf("write integer\n");fprintf(fp, "pushg %d \nwrites\n",get_address(find_key(hashtable,$2)));}
+          |RD ';'                {printf("string read\n");fprintf(fp, "read\n atoi\n");}
           |ifBlock
           |whileBlock
           ;
@@ -83,17 +85,38 @@ value: VAR
       |NUM
       ;
 
-intDec:  INT VAR                                    {printf("var declaration\n");}
-       | INT VAR '[' Exp ']'                        {printf("array declaration\n");}
-       | INT VAR '[' Exp ']' '[' Exp ']'            {printf("array 2D declaration\n");}
-       | INT VAR varAssign                          {printf("var declaration and value assign\n");}
-       | INT VAR '[' Exp ']' varAssign              {printf("array declaration and value assign\n");}
-       | INT VAR '[' Exp ']' '[' Exp ']' varAssign  {printf("array 2D declaration and value assign\n");}
+intDec:  INT VAR                                    { Entry e= new_entry_variable(new_int(manager),intVar);
+                                                      if(add_key(hashtable,e)) {
+                                                        printf("pushi 0\n");
+                                                        printf("variable declaration\n");
+                                                      } else {
+                                                        yyerror("variable redeclaration");
+                                                      }}
+       | INT VAR '[' Exp ']'                        {Entry e= new_entry_variable(new_array(manager),intVar);
+                                                     if(add_key(hashtable,e)) {
+                                                        printf("pushn %d\n", get_sizex(e));
+                                                        printf("array declaration\n");
+                                                     } else {
+                                                        yyerror("variable redeclaration");
+                                                     }}
+       | INT VAR '[' Exp ']' '[' Exp ']'            {Entry e= new_entry_variable(new_matrix(manager,$4,$7),intVar);
+                                                     if(add_key(hashtable,e)) {
+                                                        printf("pushn %d\n", get_sizexy(e));
+                                                        printf("matrix declaration\n");
+                                                     } else {
+                                                        yyerror("variable redeclaration");
+                                                     }}
        ;
 
-varAssign:   IS Exp                                 {printf("var value assign\n");}
-           | IS '[' numList ']'                     {printf("array value assign\n");}
-           | IS '[' numList ']' '[' numList ']'     {printf("array 2D value assign\n");}
+varAssign:  VAR IS Exp                                 {printf("var value assign\n");}
+           |VAR IS '[' numList ']'                     {printf("array value assign\n");}
+           |VAR IS '[' numList ']' '[' numList ']'     {printf("array 2D value assign\n");}
+           |VAR IS RD ';'                              {printf("string read\n");fprintf(fp, "read atoi\n");}
+           |VAR '[' Exp ']' IS Exp
+           |VAR '[' Exp ']' IS RD ';'
+           |VAR '[' Exp ']' IS '[' numList ']'
+           |VAR '[' Exp ']' '[' Exp ']' IS Exp
+           |VAR '[' Exp ']' '[' Exp ']' IS RD ';'
            ;
 
 numList: Exp                                     {printf("number of list\n");}
@@ -105,6 +128,7 @@ numList: Exp                                     {printf("number of list\n");}
 int main(int argc,char *argv[]){
 
   fp = fopen("output.vm","w");
+  *manager = create_manager(JUMP_LABELS_MAX);
   yyparse();
   fclose(fp);
   return 0;
