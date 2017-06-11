@@ -38,7 +38,7 @@
 %type <s_val> Exp value
 %%
 
-program: declarations statements
+program: declarations {fprintf(fp, "start\n");} statements {fprintf(fp, "stop\n");}
         ;
 
 declarations: intDec ';' declarations
@@ -116,32 +116,34 @@ whileBlock: {push_label(manager,While);
            ;
 
 condition: comparison                                {printf("comparison\n");}
-          |NOT condition
-          |condition AND condition
-          |condition OR condition
+          |NOT condition                              {fprintf(fp,"\tnot\n");}
+          |condition AND comparison                   {fprintf(fp,"\tmul\n");}
+          |condition OR comparison                    {fprintf(fp,"\tadd\n");}
           ;
 
-comparison: Exp EQ Exp                               {printf("eq between vars\n");}
-          |Exp DIF Exp
-          |Exp GT Exp
-          |Exp LT Exp
-          |Exp GTE Exp
-          |Exp LTE Exp
+comparison: Exp EQ Exp                               {printf("eq between vars\n");fprintf(fp, "\tequal\n");}
+          |Exp DIF Exp                               {printf("eq between vars\n");fprintf(fp, "\tequal\n\tnot\n");}
+          |Exp GT Exp                                {fprintf(fp, "\tsup\n");}
+          |Exp LT Exp                                {fprintf(fp, "\tinf\n");}
+          |Exp GTE Exp                               {fprintf(fp, "\tsupeq\n");}
+          |Exp LTE Exp                               {fprintf(fp, "\tinfeq\n");}
           ;
 
 Exp : value
-    | Exp PLUS Exp
-    | Exp MINUS Exp
-    | Exp MUL Exp
-    | Exp DIV Exp
-    | Exp EXP Exp
-    | Exp MOD Exp
+    | Exp PLUS Exp                    {fprintf(fp,"\tadd\n");}
+    | Exp MINUS Exp                   {fprintf(fp,"\tsub\n");}
+    | Exp MUL Exp                     {fprintf(fp,"\tmul\n");}
+    | Exp DIV Exp                     {fprintf(fp,"\tdiv\n");}
+    | Exp MOD Exp                     {fprintf(fp,"\tmod\n");}
     | '(' Exp ')'
     ;
 
-value: VAR                                          {$$.val=-1;$$.b=False;}
-      |MINUS NUM                                    {$$.val=-$2;$$.b=True;}
-      |NUM                                          {$$.val=$1;$$.b=False;}
+value: VAR                                          {$$.val=-1;$$.b=False;Entry en; en=find_key(hashtable,$1);
+                                                                           if (en)
+                                                                           {fprintf(fp,"\tpushg %d\n",get_address(en));}
+                                                                           else{yyerror("undeclared variable");}}
+      |MINUS NUM                                    {$$.val=-$2;$$.b=True;fprintf(fp,"\tpushi -%d\n",$2);}
+      |NUM                                          {$$.val=$1;$$.b=True;fprintf(fp,"\tpushi %d\n",$1);}
       ;
 
 intDec:  INT VAR                                    { Entry e= new_entry_variable(new_int(manager),intVar);
@@ -167,15 +169,65 @@ intDec:  INT VAR                                    { Entry e= new_entry_variabl
                                                      }}
        ;
 
-varAssign:  VAR IS Exp                                 {printf("var value assign\n");}
-           |VAR IS '[' numList ']'                     {printf("array value assign\n");}
-           |VAR IS '[' numList ']' '[' numList ']'     {printf("array 2D value assign\n");}
-           |VAR IS RD ';'                              {printf("string read\n");fprintf(fp, "read atoi\n");}
-           |VAR '[' Exp ']' IS Exp
-           |VAR '[' Exp ']' IS RD ';'                  {printf("array subscript assign read");}
-           |VAR '[' Exp ']' IS '[' numList ']'
-           |VAR '[' Exp ']' '[' Exp ']' IS Exp
-           |VAR '[' Exp ']' '[' Exp ']' IS RD ';'
+varAssign:  VAR IS Exp                                 {printf("var value assign\n");Entry en; en=find_key(hashtable,$1);if (en)
+                                                                           {fprintf(fp,"\tstoreg %d\n",get_address(en));}
+                                                                           else{yyerror("undeclared variable");}}
+           |VAR IS '[' numList ']'                     {printf("array value assign\n");Entry en; en=find_key(hashtable,$1);
+                                                                                     if (en)
+                                                                                      {if (get_type(en)==Array){
+
+                                                                                        }else{yyerror("type mismatch\n");}
+                                                                                      }
+                                                                                      else{yyerror("undeclared variable\n");}}
+           |VAR IS '[' numList ']' '[' numList ']'     {printf("array 2D value assign\n");Entry en; en=find_key(hashtable,$1);
+                                                                                     if (en)
+                                                                                      {if (get_type(en)==Array2D){
+                                                                                        fprintf(fp,"\tstoreg %d\n",get_address(en));
+                                                                                        }else{yyerror("type mismatch\n");}
+                                                                                      }
+                                                                                      else{yyerror("undeclared variable\n");}}
+           |VAR IS RD                                  {printf("string read\n");Entry en; en=find_key(hashtable,$1);
+                                                                                     if (en)
+                                                                                      {if (get_type(en)==intVar){
+                                                                                        fprintf(fp, "\tread\n\tatoi\n\tstoreg %d\n",get_address(en));
+                                                                                      }else{yyerror("type mismatch\n");}
+                                                                                     }
+                                                                                     else{yyerror("undeclared variable\n");}}
+           |VAR {Entry en; en=find_key(hashtable,$1);
+                 if (en)
+                  {if (get_type(en)==intVar){
+                    fprintf(fp, "\tpushgp\n\tpushi %d\n\tpadd\n",get_address(en));
+                  }else{yyerror("type mismatch\n");}
+                 }
+                 else{yyerror("undeclared variable\n");}} '[' Exp ']' IS Exp {fprintf(fp,"\tstoren\n");}
+           |VAR {Entry en; en=find_key(hashtable,$1);
+                 if (en)
+                  {if (get_type(en)==intVar){
+                    fprintf(fp, "\tpushgp\n\tpushi %d\n\tpadd\n",get_address(en));
+                  }else{yyerror("type mismatch\n");}
+                 }
+                 else{yyerror("undeclared variable\n");}}'[' Exp ']' IS RD ';'         {printf("array subscript assign read");fprintf(fp,"\tread\n\tatoi\n\tstoren\n");}
+           |VAR {Entry en; en=find_key(hashtable,$1);
+                 if (en)
+                  {if (get_type(en)==intVar){
+                    fprintf(fp, "\tpushgp\n\tpushi %d\n\tpadd\n",get_address(en));
+                  }else{yyerror("type mismatch\n");}
+                 }
+                 else{yyerror("undeclared variable\n");}}'[' Exp ']' IS '[' numList ']'
+           |VAR {Entry en; en=find_key(hashtable,$1);
+                 if (en)
+                  {if (get_type(en)==intVar){
+                    fprintf(fp, "\tpushgp\n\tpushi %d\n\tpadd\n",get_address(en));
+                  }else{yyerror("type mismatch\n");}
+                 }
+                 else{yyerror("undeclared variable\n");}}'[' Exp ']' '[' Exp ']' IS Exp  {fprintf(fp,"\tswap\n\tpushsp\n\tpushi -2\n\tpadd\n\tload 0\n\tpushi 1\n\tsub\n\tmul\n\tadd");}
+           |VAR {Entry en; en=find_key(hashtable,$1);
+                 if (en)
+                  {if (get_type(en)==intVar){
+                    fprintf(fp, "\tpushgp\n\tpushi %d\n\tpadd\n",get_address(en));
+                  }else{yyerror("type mismatch\n");}
+                 }
+                 else{yyerror("undeclared variable\n");}} '[' Exp ']' '[' Exp ']' IS RD ';'
            ;
 
 numList: Exp                                     {printf("number of list\n");}
