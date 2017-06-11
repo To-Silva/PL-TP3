@@ -17,7 +17,7 @@
 %token NUM IS INT VAR STR
 %left EQ DIF GT GTE LT LTE
 %left NOT AND OR SEP
-%left PLUS MINUS MUL DIV
+%left PLUS MINUS MUL DIV MOD
 %right EXP
 %type <i> NUM
 %type <s> VAR STR
@@ -72,6 +72,7 @@ Exp : value
     | Exp MUL Exp
     | Exp DIV Exp
     | Exp EXP Exp
+    | Exp MOD Exp    
     | '(' Exp ')'
     ;
 
