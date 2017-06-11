@@ -23,13 +23,19 @@
 %type <s> VAR STR
 %%
 
+program: declarations statements
+        ;
+
+declarations: intDec ';' declarations
+            |;
+
 
 statements:
           statement statements
           |;
 
-statement: intDec ';'
-          |VAR varAssign ';'
+statement:VAR varAssign ';'
+          |VAR '[' Exp ']' varAssign ';'
           |WR STR ';'            {printf("string write\n");fprintf(fp, "pushs %s\nwrites\n",$2);}
           |RD ';'                {printf("string read\n");fprintf(fp, "read atoi\n");}
           |ifBlock
