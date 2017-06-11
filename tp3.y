@@ -23,7 +23,7 @@
 %left NOT AND OR SEP
 %left PLUS MINUS MUL DIV MOD
 %right EXP
-%type <i> NUM Exp
+%type <i> NUM Exp condition
 %type <s> STR VAR
 %%
 
@@ -113,7 +113,7 @@ varAssign:  VAR IS Exp                                 {printf("var value assign
            |VAR IS '[' numList ']' '[' numList ']'     {printf("array 2D value assign\n");}
            |VAR IS RD ';'                              {printf("string read\n");fprintf(fp, "read atoi\n");}
            |VAR '[' Exp ']' IS Exp
-           |VAR '[' Exp ']' IS RD ';'                  {printf("array subscript assign read")}
+           |VAR '[' Exp ']' IS RD ';'                  {printf("array subscript assign read");}
            |VAR '[' Exp ']' IS '[' numList ']'
            |VAR '[' Exp ']' '[' Exp ']' IS Exp
            |VAR '[' Exp ']' '[' Exp ']' IS RD ';'
