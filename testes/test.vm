@@ -1,0 +1,80 @@
+	pushn 5
+	pushi 0
+	pushn 10
+	pushi 0
+start
+	pushi 5
+	pushi 3
+	add
+	storeg 5
+	pushg 5
+	equal
+	jz if0
+	pushi 6
+	storeg 5
+if0:
+	nop
+	pushi 3
+	add
+	equal
+	pushi 1
+	sub
+	pushg 5
+	pushg 16
+	equal
+	pushi 1
+	sub
+	mul
+	jz if1
+	pushg 16
+	jump else0
+if1:
+	nop
+	pushg 16
+	storeg 5
+else0:
+	nop
+ciclo0:
+	nop
+	pushg 16
+	pushi 4
+	equal
+	jz end0
+ciclo1:
+	nop
+	pushg 16
+	pushi 2
+	equal
+	pushi 1
+	sub
+	jz end1
+	pushg 16
+	jump ciclo1
+end1:
+	nop
+	pushg 5
+	pushi 1
+	sub
+	storeg 5
+do0:
+	nop
+	pushi 1
+	sub
+	pushi 0
+	equal
+	pushi 1
+	sub
+	not
+	jz do0
+	jump ciclo0
+end0:
+	nop
+	pushs "this is a test"
+	writes
+read
+ atoi
+	pushi -5
+	pushi -5
+	sub
+	storeg 5
+stop

@@ -1,0 +1,53 @@
+	pushn 30
+	pushi 0
+	pushi 0
+start
+	pushi 0
+	storeg 30
+	read
+	atoi
+	storeg 31
+ciclo0:
+	nop
+	pushg 30
+	pushg 31
+	inf
+	jz end0
+	pushgp
+	pushi 0
+	padd
+	pushg 30
+	read
+	atoi
+	storen
+	pushg 30
+	pushi 1
+	add
+	storeg 30
+	jump ciclo0
+end0:
+	nop
+	pushg 31
+	pushi 1
+	sub
+	storeg 31
+ciclo1:
+	nop
+	pushg 31
+	pushi 0
+	supeq
+	jz end1
+	pushgp
+	pushi 0
+	padd
+	pushg 31
+	loadn
+	writei
+	pushg 31
+	pushi 1
+	sub
+	storeg 31
+	jump ciclo1
+end1:
+	nop
+stop

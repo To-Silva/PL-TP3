@@ -51,7 +51,6 @@ Temporary Items
 lex.yy.c
 y.tab.c
 tp3
-*.vm
 *.jar
 *.tmp
 *.o

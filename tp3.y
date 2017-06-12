@@ -241,8 +241,14 @@ varMatrix: varEntry '[' Exp ']' '[' Exp ']' {$$=$1;
 %%
 #include "lex.yy.c"
 int main(int argc,char *argv[]){
-
-  fp = fopen("output.vm","w");
+  if(argc<2)
+  {
+    fp = fopen("output.vm","w");
+  }
+  else
+  {
+    fp = fopen(argv[1],"w");
+  }
   manager=create_manager(JUMP_LABELS_MAX);
   yyparse();
   fclose(fp);

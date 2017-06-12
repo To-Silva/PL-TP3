@@ -1,0 +1,76 @@
+	pushn 4
+start
+	pushgp
+	pushi 0
+	padd
+	pushi 0
+	read
+	atoi
+	storen
+	pushgp
+	pushi 0
+	padd
+	pushi 1
+	read
+	atoi
+	storen
+	pushgp
+	pushi 0
+	padd
+	pushi 2
+	read
+	atoi
+	storen
+	pushgp
+	pushi 0
+	padd
+	pushi 3
+	read
+	atoi
+	storen
+	pushgp
+	pushi 0
+	padd
+	pushi 0
+	loadn
+	pushgp
+	pushi 0
+	padd
+	pushi 1
+	loadn
+	equal
+	pushgp
+	pushi 0
+	padd
+	pushi 1
+	loadn
+	pushgp
+	pushi 0
+	padd
+	pushi 2
+	loadn
+	equal
+	mul
+	pushgp
+	pushi 0
+	padd
+	pushi 2
+	loadn
+	pushgp
+	pushi 0
+	padd
+	pushi 3
+	loadn
+	equal
+	mul
+	jz if0
+	pushs "Podem\n"
+	writes
+	jump else0
+if0:
+	nop
+	pushs "Não Podem\n"
+	writes
+else0:
+	nop
+stop

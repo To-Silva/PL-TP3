@@ -1,0 +1,124 @@
+	pushn 30
+	pushi 0
+	pushi 0
+	pushi 0
+start
+	pushi 0
+	storeg 30
+	read
+	atoi
+	storeg 31
+ciclo0:
+	nop
+	pushg 30
+	pushg 31
+	inf
+	jz end0
+	pushgp
+	pushi 0
+	padd
+	pushg 30
+	read
+	atoi
+	storen
+	pushg 30
+	pushi 1
+	add
+	storeg 30
+	jump ciclo0
+end0:
+	nop
+	pushi 1
+	storeg 30
+ciclo1:
+	nop
+	pushg 30
+	pushg 31
+	inf
+	jz end1
+	pushgp
+	pushi 0
+	padd
+	pushg 30
+	pushi 1
+	sub
+	loadn
+	pushgp
+	pushi 0
+	padd
+	pushg 30
+	loadn
+	sup
+	jz if0
+	pushg 30
+	pushi 1
+	add
+	storeg 30
+	jump else0
+if0:
+	nop
+	pushgp
+	pushi 0
+	padd
+	pushg 30
+	loadn
+	storeg 32
+	pushgp
+	pushi 0
+	padd
+	pushg 30
+	pushgp
+	pushi 0
+	padd
+	pushg 30
+	pushi 1
+	sub
+	loadn
+	storen
+	pushgp
+	pushi 0
+	padd
+	pushg 30
+	pushi 1
+	sub
+	pushg 32
+	storen
+	pushg 30
+	pushi 1
+	sub
+	storeg 30
+	pushg 30
+	pushi 0
+	equal
+	jz if1
+	pushi 1
+	storeg 30
+if1:
+	nop
+else0:
+	nop
+	jump ciclo1
+end1:
+	nop
+	pushi 0
+	storeg 30
+ciclo2:
+	nop
+	pushg 30
+	pushg 31
+	inf
+	jz end2
+	pushgp
+	pushi 0
+	padd
+	pushg 30
+	loadn
+	writei
+	pushg 30
+	pushi 1
+	add
+	storeg 30
+	jump ciclo2
+end2:
+	nop
+stop
