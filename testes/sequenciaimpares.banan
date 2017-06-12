@@ -1,6 +1,6 @@
 int count;
 int temp;
-count is read;
+count is 0;
 temp is 1;
 while(temp dif 0)
 {

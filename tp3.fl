@@ -21,10 +21,11 @@
 [Ll][Tt][Ee]        {return LTE;}
 
 \+        {return PLUS;}
--        {return MINUS;}
+-         {return MINUS;}
 \*        {return MUL;}
 \/        {return DIV;}
 \^        {return EXP;}
+\%        {return MOD;}
 
 [Aa][Nn][Dd]        {return AND;}
 [Nn][Oo][Tt]        {return NOT;}

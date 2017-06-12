@@ -2,13 +2,17 @@ int count;
 int min;
 int temp;
 count is read;
-while(count GT 0)
+if (count GT 0)
 {
-  temp is N;
-  if (temp LT min)
+  min is read;
+  while(count GT 0)
   {
-    min is temp;
+    temp is read;
+    if (temp LT min)
+    {
+      min is temp;
+    }
+  count is count-1;
   }
-count is count-1;
 }
 write min;

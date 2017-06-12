@@ -84,7 +84,7 @@ Entry new_entry_array (const int address,const Type type,const int size)
     return var;
 }
 
-Entry new_entry_array2D (const int address,const Type type,const int sizex,const int sizey)
+Entry new_entry_matrix (const int address,const Type type,const int sizex,const int sizey)
 {
   Entry var = create_entry();
 

@@ -20,9 +20,10 @@ Manager create_manager(const int stack_cap)
       {
         s->jump_labels[i] = create_stack(sizeof(int),stack_cap);
         s->curr_label[i] = 0;
+        i++;
       }
-      while (i<NUM_JMPABLES && s->jump_labels[i++]);
-      if(i==NUM_JMPABLES)
+      while (i<NUM_JMPABLES && s->jump_labels[i-1]);
+      if(s->jump_labels[NUM_JMPABLES-1])
       {
         s->addresspointer = 0;
       }
@@ -52,7 +53,7 @@ void pop_label(Manager m,const Jumpable j)
 
 int top_label(Manager m,const Jumpable j)
 {
-  return *((int *)top(m->jump_labels[j-1]));
+  return *((int *)top(m->jump_labels[j]));
 }
 
 

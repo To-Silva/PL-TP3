@@ -8,7 +8,7 @@ count is read;
 while (i LT count)
 {
   n[i] is read;
-  i is i +1;
+  i is i+1;
 }
 i is 1;
 
@@ -26,7 +26,7 @@ while ( i LT count )
     n[i] is n[i - 1];
     n[i - 1] is swap;
 
-    i = i - 1;
+    i is i - 1;
 
     if( i EQ 0)
     {
@@ -39,5 +39,5 @@ i is 0;
 while ( i LT count )
 {
       write n[i];
-
+      i is i+1;
 }
