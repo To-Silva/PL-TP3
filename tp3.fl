@@ -24,7 +24,6 @@
 -         {return MINUS;}
 \*        {return MUL;}
 \/        {return DIV;}
-\^        {return EXP;}
 \%        {return MOD;}
 
 [Aa][Nn][Dd]        {return AND;}
