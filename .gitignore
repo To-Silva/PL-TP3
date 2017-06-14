@@ -47,10 +47,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# Ignore the compiler, auto-generated .c and .o, vm, and debug stuff
+# Ignore the compiler, auto-generated .c and .o, and debug stuff
 lex.yy.c
 y.tab.c
 tp3
-*.jar
 *.tmp
 *.o
